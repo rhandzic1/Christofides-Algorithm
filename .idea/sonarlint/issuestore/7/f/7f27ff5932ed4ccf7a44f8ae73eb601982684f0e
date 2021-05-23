@@ -1,10 +1,11 @@
 
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(ø×¹Şşÿÿÿÿ8•ù…˜/
+G
+java:S1481"*Remove this unused "izlaz" local variable.(»‹İ 8¶ŠãÎ™/
+V
+java:S1854"9Remove this useless assignment to local variable "izlaz".(»‹İ 8¶ŠãÎ™/
 O
 java:S1128"-Remove this unused import 'java.util.Arrays'.(î–˜Éüÿÿÿÿ8¶ŠãÎ™/
 Z	java:S106"9Replace this use of System.out or System.err by a logger.(«“¦úÿÿÿÿ8ÔÈ†˜/
-Z	java:S106"9Replace this use of System.out or System.err by a logger.(ø×¹Şşÿÿÿÿ8•ù…˜/
-V
-java:S1854"9Remove this useless assignment to local variable "izlaz".(»‹İ 8¶ŠãÎ™/
-G
-java:S1481"*Remove this unused "izlaz" local variable.(»‹İ 8¶ŠãÎ™/
-U	java:S106"9Replace this use of System.out or System.err by a logger.(™Œ¨Â8¶ŠãÎ™/
+U	java:S106"9Replace this use of System.out or System.err by a logger.(™Œ¨Â8¥Ã¨Ù™/
+T	java:S106"9Replace this use of System.out or System.err by a logger.(Ì¤¨8ÖüÆÙ™/

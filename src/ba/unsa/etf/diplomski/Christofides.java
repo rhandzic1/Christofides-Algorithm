@@ -13,7 +13,6 @@ public class Christofides {
     private ArrayList<Integer> eulersPath;
     private double pathLength;
 
-
     public Christofides(String input) {
 
         List<City> res = new ArrayList<>();
@@ -73,7 +72,7 @@ public class Christofides {
         while(!currentPath.isEmpty()) {
 
             int u = currentPath.peek();
-            if(mstCopy.get(u).size() != 0) {
+            if(mstCopy.get(u).size() == 0) {
                 eulersPath.push(u);
                 currentPath.pop();
 
@@ -89,10 +88,6 @@ public class Christofides {
             eulersPath.pop();
         }
         this.eulersPath = result;
-        System.out.println("Eulerov put: ");
-        for (Integer integer : eulersPath) {
-            System.out.println(integer);
-        }
     }
     public void eulerToHamilton() {
 
@@ -100,10 +95,15 @@ public class Christofides {
         this.eulersPath.clear();
         this.eulersPath.addAll(unique);
 
+        double length = 0;
+        for (int i = 0; i < eulersPath.size() - 1; i++) {
+            length += adjMatrix.get(eulersPath.get(i)).get(eulersPath.get(i + 1));
+        }
+        length += adjMatrix.get(0).get(eulersPath.get(eulersPath.size() - 1));
+        this.pathLength = length;
     }
     public void greedyPerfectMatching() {
-        mstAdjList.forEach(l -> System.out.println(l));
-        System.out.println("-------------------------------");
+
         ArrayList<Integer> mstOddVertices = new ArrayList<>();
         for(int i = 0; i < this.mstAdjList.size(); i++) {
             if(mstAdjList.get(i).size() % 2 == 1) {
@@ -117,7 +117,8 @@ public class Christofides {
             int minDistanceNodeIndex = -1;
 
             for(int i = 0; i < mstOddVertices.size(); i++) {
-                if(adjMatrix.get(firstNode).get(mstOddVertices.get(i)) < minDistance) {
+                if(firstNode != mstOddVertices.get(i) &&
+                        adjMatrix.get(firstNode).get(mstOddVertices.get(i)) < minDistance) {
                     minDistance = adjMatrix.get(firstNode).get(mstOddVertices.get(i));
                     minDistanceNodeIndex = i;
                 }
@@ -127,9 +128,9 @@ public class Christofides {
             mstOddVertices.remove(minDistanceNodeIndex);
             mstOddVertices.remove(0);
         }
-        mstAdjList.forEach(l -> System.out.println(l));
     }
-    //Izmijeniti metodu, da bude void i bez parametara
+
+
     public void kruskalMst() {
 
         Collections.sort(this.e, (o1, o2) -> {
@@ -200,5 +201,9 @@ public class Christofides {
 
     public ArrayList<Integer> getHamiltonCycle() {
         return eulersPath;
+    }
+
+    public double getPathLength() {
+        return pathLength;
     }
 }

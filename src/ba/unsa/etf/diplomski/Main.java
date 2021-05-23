@@ -21,6 +21,7 @@ public class Main {
         christofidesAlgorithm.eulerToHamilton();
         ArrayList<Integer> tsp = christofidesAlgorithm.getHamiltonCycle();
         tsp.forEach(grad -> System.out.println(" " + grad + " "));
+        System.out.println("Dužina puta je: " + christofidesAlgorithm.getPathLength());
 
     }
 }
