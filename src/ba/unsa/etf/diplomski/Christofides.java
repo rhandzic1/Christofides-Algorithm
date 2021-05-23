@@ -10,73 +10,100 @@ public class Christofides {
     private ArrayList<ArrayList<Double>> adjMatrix;
     private ArrayList<ArrayList<Double>> e;
     private ArrayList<ArrayList<Integer>> mstAdjList;
+    private ArrayList<Integer> eulersPath;
     private double pathLength;
 
-    public Christofides(String input, String output) {
 
-        this.cities = readLocations(input);
-        this.adjMatrix = new ArrayList<>();
-        this.e = new ArrayList<>();
-        this.pathLength = -1d;
+    public Christofides(String input) {
 
-        for(int i = 0; i < this.cities.size(); i++) {
-            this.adjMatrix.add(new ArrayList<Double>(this.cities.size()));
-        }
-        for(int i = 0; i < cities.size(); i++) {
-            for(int j = i; j < cities.size() ; j++) {
-                if(i == j) {
-                    adjMatrix.get(i).set(j, 0d);
-                    continue;
-                }
-                double d = cities.get(i).getDistance(cities.get(j));
-                adjMatrix.get(i).set(j, d);
-                adjMatrix.get(j).set(i, d);
-                e.add(new ArrayList<Double>(Arrays.asList(Double.valueOf(i), Double.valueOf(i), d)));
+        List<City> res = new ArrayList<>();
+        try {
+            File myObj = new File(input);
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                String[] coordinates = data.split("\\s+");
+                res.add(new City(Double.parseDouble(coordinates[0].trim()), Double.parseDouble(coordinates[1].trim())));
             }
+            myReader.close();
+            this.cities = res;
+            this.adjMatrix = new ArrayList<>();
+            this.e = new ArrayList<>();
+            this.pathLength = -1d;
+
+            System.out.println("Broj gradova: " + cities.size());
+            for(int i = 0; i < this.cities.size(); i++) {
+                this.adjMatrix.add(new ArrayList<Double>(Collections.nCopies(this.cities.size(), 0d)));
+            }
+            for(int i = 0; i < cities.size(); i++) {
+                for(int j = i; j < cities.size() ; j++) {
+                    if(i == j) {
+                        continue;
+                    }
+                    double d = cities.get(i).getDistance(cities.get(j));
+                    adjMatrix.get(i).set(j, d);
+                    adjMatrix.get(j).set(i, d);
+                    e.add(new ArrayList<Double>(Arrays.asList(Double.valueOf(i), Double.valueOf(j), d)));
+                }
+            }
+
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
         }
     }
 
-    /**
-     * Hierholzerov algoritam
-     * void printEuler(int v){
-     *
-     *             stack<int> cpath;    // current path
-     *             stack<int> epath;    // euler path
-     *
-     *             cpath.push(v);        // euler path starts from v
-     *
-     *             while(!cpath.empty()){
-     *                 int u = cpath.top();
-     *
-     *                 if(adj[u].size()==0){
-     *                     // if all edges from u are visited
-     *                     // pop u and push it to euler path
-     *                     epath.push(u);
-     *                     cpath.pop();
-     *                 }
-     *                 else{
-     *                     // if all edges from u are not visited
-     *                     // select any edge (u, v)
-     *                     // push v to current path and remove edge (u, v) from the graph
-     *                     cpath.push(adj[u].begin()->first);
-     *                     removeEdge(u,adj[u].begin()->first);
-     *                 }
-     *             }
-     *
-     *             while(!epath.empty()){
-     *                 cout<<" "<<epath.top()<<" ";
-     *                 epath.pop();
-     *             }
-     *
-     *         }
-     */
     public void eulersPath() {
 
+        //Koristi se Hierholzerov algoritam, koji ima linearnu kompleksnost
+        Stack<Integer> currentPath = new Stack<>();
+        Stack<Integer> eulersPath = new Stack<>();
+        ArrayList<ArrayList<Integer>> mstCopy = mstAdjList;
+
+      /*  for(int i = 0; i < mstAdjList.size(); i++) {
+            if(!mstAdjList.get(i).isEmpty()) {
+                mstCopy.get(i).addAll(new ArrayList<>());
+                for(int j = 0; j < mstAdjList.get(i).size(); j++) {
+                    mstCopy.get(i).add(mstAdjList.get(i).get(j));
+                }
+            }
+        }*/
+
+        currentPath.push(0);
+        while(!currentPath.isEmpty()) {
+
+            int u = currentPath.peek();
+            if(mstCopy.get(u).size() != 0) {
+                eulersPath.push(u);
+                currentPath.pop();
+
+            } else {
+                currentPath.push(mstCopy.get(u).get(0));
+                mstCopy.get(u).remove(0);
+            }
+        }
+        ArrayList<Integer> result = new ArrayList<>();
+
+        while(!eulersPath.isEmpty()) {
+            result.add(eulersPath.peek());
+            eulersPath.pop();
+        }
+        this.eulersPath = result;
+        System.out.println("Eulerov put: ");
+        for (Integer integer : eulersPath) {
+            System.out.println(integer);
+        }
     }
     public void eulerToHamilton() {
 
+        Set unique = new HashSet(this.eulersPath);
+        this.eulersPath.clear();
+        this.eulersPath.addAll(unique);
+
     }
     public void greedyPerfectMatching() {
+        mstAdjList.forEach(l -> System.out.println(l));
+        System.out.println("-------------------------------");
         ArrayList<Integer> mstOddVertices = new ArrayList<>();
         for(int i = 0; i < this.mstAdjList.size(); i++) {
             if(mstAdjList.get(i).size() % 2 == 1) {
@@ -84,6 +111,7 @@ public class Christofides {
             }
         }
         while(!mstOddVertices.isEmpty()) {
+
             double minDistance = Double.MAX_VALUE;
             int firstNode = mstOddVertices.get(0);
             int minDistanceNodeIndex = -1;
@@ -99,6 +127,7 @@ public class Christofides {
             mstOddVertices.remove(minDistanceNodeIndex);
             mstOddVertices.remove(0);
         }
+        mstAdjList.forEach(l -> System.out.println(l));
     }
     //Izmijeniti metodu, da bude void i bez parametara
     public void kruskalMst() {
@@ -120,7 +149,8 @@ public class Christofides {
         }
 
         //Na početku su sve težine jednake jedinici
-        List<Double> weights = new ArrayList<>(Collections.nCopies(this.adjMatrix.size(), 0d));
+        List<Integer> weights = new ArrayList<>(Collections.nCopies(this.adjMatrix.size(), 0));
+
         for(int i = 0; i < this.e.size(); i++)
         {
             //Prvi čvor
@@ -143,6 +173,7 @@ public class Christofides {
             }
 
             if(referenceNodeOne != referenceNodeTwo) {
+
                 int low = -1;
                 int high = -1;
                 if(weights.get(referenceNodeOne) < weights.get(referenceNodeTwo)) {
@@ -157,7 +188,7 @@ public class Christofides {
                 res.add(new ArrayList<>(Arrays.asList(firstNode, secondNode)));
             }
         }
-        this.mstAdjList = new ArrayList<>();
+        this.mstAdjList = new ArrayList<>(this.adjMatrix.size());
         for(int i = 0; i < this.adjMatrix.size(); i++) {
             mstAdjList.add(new ArrayList<>());
         }
@@ -165,24 +196,9 @@ public class Christofides {
             mstAdjList.get(res.get(i).get(0)).add(res.get(i).get(1));
             mstAdjList.get(res.get(i).get(1)).add(res.get(i).get(0));
         }
-        this.mstAdjList = res;
     }
 
-    public List<City> readLocations(String inputFile) {
-        List<City> res = new ArrayList<>();
-        try {
-            File myObj = new File("filename.txt");
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-                String[] coordinates = data.split("\\s+");
-                res.add(new City(Double.parseDouble(coordinates[0].trim()), Double.parseDouble(coordinates[1].trim())));
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-        return res;
+    public ArrayList<Integer> getHamiltonCycle() {
+        return eulersPath;
     }
 }
