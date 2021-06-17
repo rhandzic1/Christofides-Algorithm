@@ -91,7 +91,7 @@ public class Christofides {
     }
     public void eulerToHamilton() {
 
-        Set unique = new HashSet(this.eulersPath);
+        Set unique = new LinkedHashSet(this.eulersPath);
         this.eulersPath.clear();
         this.eulersPath.addAll(unique);
 
