@@ -11,8 +11,6 @@ public class Main {
         System.out.println("Unesite lokaciju input fajla: ");
         Scanner scanner = new Scanner(System.in);
         String ulaz = scanner.nextLine();
-        System.out.println("Unesite lokaciju output fajla: ");
-        String izlaz = scanner.nextLine();
 
         Christofides christofidesAlgorithm = new Christofides(ulaz);
         christofidesAlgorithm.kruskalMst();
